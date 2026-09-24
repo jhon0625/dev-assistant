@@ -1,6 +1,8 @@
 import * as readline from 'readline';
 import { Conversation } from './conversation.js';
 import { DOCUMENTATION_ASSISTANT_PROMPT } from '../llm/prompts.js';
+import { config } from '../config.js';
+import { client } from '../llm/anthropic-client.js';
 
 export async function startCLI(): Promise<void>
 {
@@ -23,7 +25,7 @@ export async function startCLI(): Promise<void>
     console.log("");
     const promptUser = ():void=>
 {
-    rl.question("Tu: ",(input)=>{
+    rl.question("Tu: ",async (input)=>{
         const userInput= input.trim();
         if(!userInput){
             promptUser();
@@ -53,11 +55,34 @@ export async function startCLI(): Promise<void>
             return;
         }
         try{
-            const err = error 
-        }catch{
-
+            conversation.addUserMessage(userInput);
+            process.stdout.write("/nClaude");
+            const record = conversation.getHistory();
+            let fullMesage= "";
+            const stream = client.messages.stream({
+                model: config.anthropicModel,
+                max_tokens: 1024,
+                system: DOCUMENTATION_ASSISTANT_PROMPT,
+                messages: record,
+            });
+            stream.on("text",(chunk)=>{
+                process.stdout.write(chunk);
+                fullMesage += chunk;
+            });
+            const finalMessage = await stream.finalMessage();
+            conversation.addUsage(finalMessage.usage.input_tokens, finalMessage.usage.output_tokens);
+            process.stdout.write("\n\n");
+            conversation.addAssistantMessage(fullMesage);
+        }catch(error){
+             const err = error as Error;
+            console.error("Error: ", err.message);
+            
         }
+        promptUser();
+
 
     });
 };
+promptUser();
+
 }

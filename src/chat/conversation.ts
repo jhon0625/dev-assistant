@@ -32,8 +32,9 @@ export class Conversation
                 messages: this.messages,
                 
         });
+        this.addUsage(response.usage.input_tokens, response.usage.output_tokens);
         this.totalInputsTokens += response.usage.input_tokens;
-         this.totalOutputsTokens += response.usage.output_tokens;
+        this.totalOutputsTokens += response.usage.output_tokens;
         const textBlock = response.content.find((block)=> block.type==="text");
         if(!textBlock || textBlock.type !=="text"){
          throw new Error("Claude no retorno un bloque de texto en la respuesta")
@@ -41,6 +42,11 @@ export class Conversation
         const responseText = textBlock.text;
         this.addAssistantMessage(responseText);
         return responseText;
+        }
+        addUsage(input_tokens: number, output_tokens: number)
+        {
+            this.totalInputsTokens += input_tokens;
+            this.totalOutputsTokens += output_tokens;
         }
 
         clear(): void{
