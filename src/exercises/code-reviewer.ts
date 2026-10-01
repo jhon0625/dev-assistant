@@ -41,7 +41,7 @@ sizeWarning=" Archivo muy grande - revisando primeras "+MAX_CHARS+" caracteres";
 
 // Mostrar header
 console.log("┌───────────────────────────────────────────────────┐");
-console.log("│ DevAssistant - Code Reviewer │");
+console.log("│ DevAssistant - Code Reviewer                      │");                 
 console.log("└───────────────────────────────────────────────────┘");
 console.log(`\n Archivo: ${fileName}`);
 console.log(` Ruta: ${absolutePath}`);

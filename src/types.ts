@@ -9,7 +9,7 @@ export interface ToolDefinition
 {
   name: string;
   description: string;
-  imput_schame:
+  input_schema:
   {
     type: "object";
     properties: Record<string,unknown>;
